@@ -1,5 +1,4 @@
-# flask_transactions_template
-
+```python
 # Import necessary libraries from Flask
 from flask import Flask, redirect, request, render_template, url_for
 
@@ -78,3 +77,4 @@ def delete_transaction(transaction_id):
 # Run the Flask application
 if __name__ == "__main__":
     app.run(debug=True)
+```
