@@ -74,6 +74,47 @@ def delete_transaction(transaction_id):
     # Redirect to the transactions list page after deleting the transaction
     return redirect(url_for("get_transactions"))
 
+@app.route("/search", methods=["GET", "POST"])
+def search_transactions():
+    """
+    Handles transaction filtering based on amount range.
+    GET: Displays the search form (search.html).
+    POST: Processes the form data and displays filtered results (transactions.html).
+    """
+    if request.method == 'POST':
+        try:
+            # 1. Retrieve and convert minimum and maximum amount values
+            min_amount = float(request.form['min_amount'])
+            max_amount = float(request.form['max_amount'])
+        except ValueError:
+            # Handle case where conversion to float fails (e.g., empty or invalid input)
+            # For simplicity, we'll default to showing all transactions or a relevant message.
+            # In a real app, you'd show an error message.
+            return render_template("transactions.html", transactions=transactions, error="Invalid amount input.")
+
+        # 2. Filter the transactions list using a list comprehension
+        filtered_transactions = [
+            t for t in transactions 
+            if min_amount <= t['amount'] <= max_amount
+        ]
+
+        # 3. Pass the filtered list to the transactions.html template
+        return render_template("transactions.html", transactions=filtered_transactions)
+
+    # If the request method is GET, render the search form template
+    return render_template("search.html")
+
+@app.route("/balance")
+def total_balance():
+    """
+    Calculates and returns the total balance as a simple string.
+    """
+    # 1. Calculate the total balance
+    balance = sum(t['amount'] for t in transactions)
+    
+    # 2. Return the total balance as a formatted string
+    return f"Total Balance: {balance:.2f}"
+
 # Run the Flask application
 if __name__ == "__main__":
     app.run(debug=True)
